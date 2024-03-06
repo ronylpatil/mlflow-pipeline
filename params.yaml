@@ -12,3 +12,6 @@ make_dataset:
   seed: 41
   processed_data: /data/processed
   res_seed: 42
+
+build_features:
+  extended_data: /data/extended
