@@ -23,9 +23,9 @@ mlflow_config:
   remote_server_uri: http://localhost:5000     # 127.0.0.1
 
 train_model:
-  n_estimators: 100
+  n_estimators: 50
   criterion: gini
-  max_depth: 80
+  max_depth: 50
   min_samples_leaf: 30 
   random_state: 42
   min_samples_split: 60

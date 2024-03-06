@@ -87,3 +87,5 @@ temp/
 
 # Mypy cache
 .mypy_cache/
+/artifacts
+/plots

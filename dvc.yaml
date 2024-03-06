@@ -59,8 +59,6 @@ stages:
     - mlflow_config.remote_server_uri
     outs:
     - .${train_model.model_dir}/model.joblib
-    - ./artifacts/
-    - ./plots/training/
 
   tune_model:
     cmd: python ./src/models/tune_model.py
@@ -74,7 +72,5 @@ stages:
     - mlflow_config.tunningExpName
     - mlflow_config.remote_server_uri
     - hyperopt.max_eval
-    outs:
-    - ./artifacts/
-    - ./plots/tunning/
+
 

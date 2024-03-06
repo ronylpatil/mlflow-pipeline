@@ -1,0 +1,131 @@
+schema: '2.0'
+stages:
+  load_dataset:
+    cmd: python ./src/data/load_dataset.py
+    deps:
+    - path: ./src/data/load_dataset.py
+      hash: md5
+      md5: d58bb455b8d0d6a6760e593e2297d2c7
+      size: 2114
+    params:
+      params.yaml:
+        load_dataset.drive_link: 
+          https://drive.google.com/file/d/1FCVWcNyBX6tFYjfORhnAvIwS8I8zV92j/view?usp=sharing
+        load_dataset.file_name: wineq
+        load_dataset.raw_data: /data/raw
+    outs:
+    - path: ./data/raw/wineq.csv
+      hash: md5
+      md5: 3155f71c567752e38f24f887ce0c4ef8
+      size: 72970
+  make_dataset:
+    cmd: python ./src/data/make_dataset.py
+    deps:
+    - path: ./data/raw/wineq.csv
+      hash: md5
+      md5: 3155f71c567752e38f24f887ce0c4ef8
+      size: 72970
+    - path: ./src/data/make_dataset.py
+      hash: md5
+      md5: 8bf252df39adfc976db6502ac8a7bd28
+      size: 3698
+    params:
+      params.yaml:
+        load_dataset.file_name: wineq
+        load_dataset.raw_data: /data/raw
+        make_dataset.processed_data: /data/processed
+        make_dataset.res_seed: 42
+        make_dataset.seed: 41
+        make_dataset.test_split: 0.25
+    outs:
+    - path: ./data/processed/test.csv
+      hash: md5
+      md5: ad48d3c4e5f3a042ccf540a6e237bd5c
+      size: 104695
+    - path: ./data/processed/train.csv
+      hash: md5
+      md5: 65f8c437f89c9ab2b9a724feb0056432
+      size: 314608
+  build_features:
+    cmd: python ./src/features/build_features.py
+    deps:
+    - path: ./data/processed/test.csv
+      hash: md5
+      md5: ad48d3c4e5f3a042ccf540a6e237bd5c
+      size: 104695
+    - path: ./data/processed/train.csv
+      hash: md5
+      md5: 65f8c437f89c9ab2b9a724feb0056432
+      size: 314608
+    - path: ./src/features/build_features.py
+      hash: md5
+      md5: ac74288d13827cfe74b370cb76d4a8df
+      size: 3229
+    params:
+      params.yaml:
+        build_features.extended_data: /data/extended
+        make_dataset.processed_data: /data/processed
+    outs:
+    - path: ./data/extended/extended_test.csv
+      hash: md5
+      md5: 56ef2daa1f6940621c3ba0f87e10b0c1
+      size: 200566
+    - path: ./data/extended/extended_train.csv
+      hash: md5
+      md5: db4ce59faea54e04dae93af1e942f4c2
+      size: 601982
+  train_model:
+    cmd: python ./src/models/train_model.py
+    deps:
+    - path: ./data/extended/extended_test.csv
+      hash: md5
+      md5: 56ef2daa1f6940621c3ba0f87e10b0c1
+      size: 200566
+    - path: ./data/extended/extended_train.csv
+      hash: md5
+      md5: db4ce59faea54e04dae93af1e942f4c2
+      size: 601982
+    - path: ./src/models/train_model.py
+      hash: md5
+      md5: 4d0580c9fc61170b923f4b77a4a4d48b
+      size: 5594
+    params:
+      params.yaml:
+        base.target: quality
+        build_features.extended_data: /data/extended
+        mlflow_config.remote_server_uri: http://localhost:5000
+        mlflow_config.trainingExpName: modeltraining
+        train_model.criterion: gini
+        train_model.max_depth: 50
+        train_model.min_samples_leaf: 30
+        train_model.min_samples_split: 60
+        train_model.model_dir: /models
+        train_model.n_estimators: 50
+        train_model.random_state: 42
+    outs:
+    - path: ./models/model.joblib
+      hash: md5
+      md5: e26db9f697ece94d7d1bd6a81244f176
+      size: 822825
+  tune_model:
+    cmd: python ./src/models/tune_model.py
+    deps:
+    - path: ./data/extended/extended_test.csv
+      hash: md5
+      md5: 56ef2daa1f6940621c3ba0f87e10b0c1
+      size: 200566
+    - path: ./data/extended/extended_train.csv
+      hash: md5
+      md5: db4ce59faea54e04dae93af1e942f4c2
+      size: 601982
+    - path: ./src/models/tune_model.py
+      hash: md5
+      md5: c5467c84b9cb035bbfb4f7559024fd11
+      size: 5873
+    params:
+      params.yaml:
+        base.target: quality
+        build_features.extended_data: /data/extended
+        hyperopt.max_eval: 5
+        mlflow_config.remote_server_uri: http://localhost:5000
+        mlflow_config.tunningExpName: modeltunning
