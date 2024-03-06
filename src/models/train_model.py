@@ -67,7 +67,7 @@ def main() -> None :
           Y = data[TARGET]
 
           details = train_model(X_train, Y, parameters['n_estimators'], parameters['criterion'], parameters['max_depth'], min_samples_leaf = parameters['min_samples_leaf'],
-                                 min_samples_split = parameters['min_samples_split'], random_state = parameters['seed'], yaml_file_obj = params)
+                                 min_samples_split = parameters['min_samples_split'], random_state = parameters['random_state'], yaml_file_obj = params)
 
           filename = visualize.conf_matrix(Y, details['y_pred'], labels = details['model'].classes_, path = plots_dir, params_obj = params)
 
@@ -85,7 +85,7 @@ def main() -> None :
           # runs description
           with mlflow.start_run(description = 'Using random forest classifier algo - by ronil') : 
                mlflow.log_params({"n_estimator": details['params']['n_estimator'], "criterion": details['params']['criterion'], 
-                                  "max_depth": details['params']['max_depth'], "seed": details['params']['seed']})
+                                  "max_depth": details['params']['max_depth'], "seed": details['params']['random_state']})
                mlflow.log_metrics({"accuracy": details['metrics']['accuracy'], "precision": details['metrics']['precision'], 
                                    "recall": details['metrics']['recall'], "roc_score": details['metrics']['roc_score']})
                log_model(details['model'], "model")

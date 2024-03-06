@@ -25,7 +25,6 @@ mlflow_config:
 train_model:
   n_estimators: 100
   criterion: gini
-  seed: 43
   max_depth: 80
   min_samples_leaf: 30 
   random_state: 42
@@ -33,4 +32,4 @@ train_model:
   model_dir: /models
 
 hyperopt:
-  max_eval: 50
+  max_eval: 5
