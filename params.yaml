@@ -15,3 +15,20 @@ make_dataset:
 
 build_features:
   extended_data: /data/extended
+
+mlflow_config:
+  # artifacts_dir: artifacts
+  trainingExpName: modeltraining
+  tunningExpName: modeltunning
+  remote_server_uri: http://localhost:5000     # 127.0.0.1
+
+
+train_model:
+  n_estimators: 100
+  criterion: gini
+  seed: 43
+  max_depth: 80
+  min_samples_leaf: 30 
+  random_state: 42
+  min_samples_split: 60
+  model_dir: /models
