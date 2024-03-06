@@ -22,7 +22,6 @@ mlflow_config:
   tunningExpName: modeltunning
   remote_server_uri: http://localhost:5000     # 127.0.0.1
 
-
 train_model:
   n_estimators: 100
   criterion: gini
@@ -32,3 +31,6 @@ train_model:
   random_state: 42
   min_samples_split: 60
   model_dir: /models
+
+hyperopt:
+  max_eval: 50
