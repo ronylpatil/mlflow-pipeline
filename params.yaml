@@ -1,0 +1,14 @@
+base:
+  project_name: mlflow-testing
+  target: quality
+
+load_dataset:
+  drive_link: https://drive.google.com/file/d/1FCVWcNyBX6tFYjfORhnAvIwS8I8zV92j/view?usp=sharing
+  raw_data: /data/raw
+  file_name: wineq
+
+make_dataset:
+  test_split: 0.25
+  seed: 41
+  processed_data: /data/processed
+  res_seed: 42
