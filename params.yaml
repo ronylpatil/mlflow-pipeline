@@ -21,6 +21,8 @@ mlflow_config:
   trainingExpName: modeltraining
   tunningExpName: modeltunning
   remote_server_uri: http://localhost:5000     # 127.0.0.1
+  mlflow_tracking_uri: sqlite:///mlflow.db
+  cmd: mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./artifacts --host localhost -p 5000
 
 train_model:
   n_estimators: 50
