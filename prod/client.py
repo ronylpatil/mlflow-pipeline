@@ -96,9 +96,3 @@ if fixed_acidity and volatile_acidity and citric_acid and residual_sugar and chl
 
 # cases to handle
 # register model add desc and tag to model registry and add desc, tags and aliases to versions using api.
-# and if someone give more than one alias then how to show the current stage??
-
-
-
-
-
