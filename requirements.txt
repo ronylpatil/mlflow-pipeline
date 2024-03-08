@@ -13,3 +13,5 @@ PyYAML==6.0.1
 scikit_learn==1.4.1.post1
 setuptools==69.1.1
 streamlit==1.31.1
+
+# pipreqs path/of/project (if already req.txt use --force after cmd)
