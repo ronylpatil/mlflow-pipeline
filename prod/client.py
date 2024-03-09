@@ -92,7 +92,3 @@ if fixed_acidity and volatile_acidity and citric_acid and residual_sugar and chl
                op = st.session_state['final_model'].predict(input_data)[0]
                pred_prob = st.session_state['final_model'].predict_proba(input_data)[0]
                st.success(f'Predicted Quality is {op} with {(max(pred_prob) * 100):.2f}% model\'s confidence.')
-
-
-# cases to handle
-# register model add desc and tag to model registry and add desc, tags and aliases to versions using api.
