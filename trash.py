@@ -186,4 +186,318 @@ def main() -> None :
 if __name__ == '__main__' : 
      infologger.info('train_model.py as __main__')
      main()
+
+# ------------------------------------- model ko experiment se prod env me serve krne tk ki kahani--------------------
+
+# Plan of Action
+# as of now 
+# 1. hum experiment ka description add ke paye he code set
+# 2. each runs ka description add kr paye help
+# 3. har run ko ek tag de paye he
+
+# Next target 
+# pick experiment and from experiments pick run based of condition -- done
+# register model (new/existing) -- done
+# model registry ka description  -- done
+# model reg ko tag  -- done
+# version ko ek description -- done 
+# version ko ek tag   -- done
+# verion ko ek alias  -- done
+
+# get all versions details of registered model
+
+import pathlib
+import mlflow
+import yaml
+from mlflow.tracking import MlflowClient
+from mlflow.exceptions import MlflowException
+
+
+curr_path = pathlib.Path(__file__) 
+home_dir = curr_path.parent.parent.parent
+params_loc = f'{home_dir.as_posix()}/params.yaml'
+params = yaml.safe_load(open(params_loc, encoding = 'utf8'))
+
+mlflow.set_tracking_uri(params['mlflow_config']['mlflow_tracking_uri'])
+client = MlflowClient() 
+
+# get version no if alias is present else get None
+
+# print(client.get_model_version_by_alias(name = 'api_testing', alias = 'production').version)
+
+# try : 
+#      version = client.get_model_version_by_alias(name = 'api_testing', alias = 'productions').version
+# except MlflowException :
+#      version = None
+
+
+
+
+
+
+'''
+problem statement :
+     experiments k run mese 1 efficient model nikalo -- done
+     model register karo -- done
+     description or tag assign karo  -- done
+     version ko description, tag and alias assign karo (alias production rakho)  -- done
+
+     agr prod me koi nahi he to isko dalo else agr he already to
+     jo model production me already he uski accuracy current se km hoto
+     usko archieve me dalo or current ko production me dalo 
+     else message dalo ki efficient model already production me he
+
+'''
+
+exp_name = 'modeltunning'
+
+# naam se id nikalo
+exp_id = client.search_experiments(filter_string = f"name = '{exp_name}'")[0].experiment_id
+print('Experiment id mil gyi:', exp_id)
+
+
+# ab id se uske runs search karo
+# for i in client.search_runs(experiment_ids = exp_id, order_by = ['metrics.accuracy DESC', 'metrics.precision DESC', 'metrics.recall DESC']) : 
+#      # print(i, '\n')
+#      print(f"accuracy: {i.data.metrics['accuracy']:.4f} | precision: {i.data.metrics['precision']:.4f} | recall: {i.data.metrics['recall']:.4f} | \
+# run_name: {i.info.run_name} | run_id: {i.info.run_id}")
      
+
+# print(client.search_runs(experiment_ids = exp_id, filter_string = 'metrics.accuracy > 0.74', order_by = ['metrics.precision DESC', 'metrics.recall DESC'])[0])
+
+# top-1 ki run id nikalo
+new_model = client.search_runs(experiment_ids = exp_id, order_by = ['metrics.accuracy DESC', 'metrics.precision DESC', 'metrics.recall DESC'])[6]
+run_id = new_model.info.run_id
+reg_model_name = 'model1'
+
+if client.search_registered_models(filter_string = f"name = '{reg_model_name}'") :     # model already register he
+     print('model already register he')
+     try : 
+          prod_version = client.get_model_version_by_alias(name = reg_model_name, alias = 'production').version
+          print('prod me already ek model serve kr rha he')
+     except MlflowException as e : 
+          # prod_version = None
+          print('Exception: ', e)
+          print('Exception aaya re baba')
+     else :
+          prod_run_id = client.get_model_version_by_alias(name = reg_model_name, alias = 'production').run_id
+          prod_accuracy = mlflow.get_run(run_id = prod_run_id).data.metrics['accuracy']
+          print('prod model ki run id or acc mil gyi')
+
+          if new_model.data.metrics['accuracy'] > prod_accuracy :
+               print('new model outperform kr rha he, lets put into prod env') 
+               # model mil gya ab model register karo
+               model_uri = f"runs:/{run_id}/sklearn-model"
+               mv = mlflow.register_model(model_uri, name = reg_model_name, tags = {'dev': 'ronil', 'val_status': 'approved'})
+               print('model register ko register kr diya')
+
+               # register model ka desc update karo
+               client.update_registered_model(name = reg_model_name, description = 'random forest model with acc > 75%')
+               print('reg model ka desc bhi add kr diya')
+
+               # register model me tag dalna pdega
+               client.set_registered_model_tag(name = reg_model_name, key = 'approved_by', value = 'SMLE-II')
+               print('register model ko tag bhi de diya')
+
+               # version ko description dega
+               client.update_model_version(name = reg_model_name, version = mv.version, description = 'version-I by dev ronil')
+               print('ab version ka description add kr diya')
+
+               client.set_registered_model_alias(name = reg_model_name, version = mv.version, alias = 'production')
+               client.set_registered_model_alias(name = reg_model_name, version = prod_version, alias = 'archive')
+               # client.delete_model_version_tag(reg_model_name, version = prod_version, key = 'val_status')
+               client.set_model_version_tag(name = reg_model_name, version = prod_version, key = 'val_status', value = 'trash')
+          else : 
+               print('High performing model already in production.')
+else :     # model register hi nahi he 
+     # model mil gya ab model register karo
+     model_uri = f"runs:/{run_id}/sklearn-model"
+     mv = mlflow.register_model(model_uri, name = reg_model_name, tags = {'dev': 'ronil', 'val_status': 'approved'})
+     print('model register kr diya')
+
+     # register model ka desc update karo
+     client.update_registered_model(name = reg_model_name, description = 'random forest model with acc > 75%')
+     print('reg model ka desc bhi add kr diya')
+
+     # register model me tag dalna pdega
+     client.set_registered_model_tag(name = reg_model_name, key = 'approved_by', value = 'SMLE-II')
+     print('register model ko tag bhi de diya')
+
+     # version ko description dega
+     client.update_model_version(name = reg_model_name, version = mv.version, description = 'version-I by dev ronil')
+     print('ab version ko description de diya')
+
+     client.set_registered_model_alias(name = reg_model_name, version = mv.version, alias = 'production')
+     print('first version he to direct prod me dal diya')
+
+
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------
+
+'''
+if prod_version : 
+
+     prod_run_id = client.get_model_version_by_alias(name = reg_model_name, alias = 'production').run_id
+
+     prod_accuracy = mlflow.get_run(run_id = prod_run_id).data.metrics['accuracy']
+
+     if x.data.metrics['accuracy'] > prod_accuracy : 
+          # model mil gya ab model register karo
+          model_uri = f"runs:/{run_id}/sklearn-model"
+          mv = mlflow.register_model(model_uri, name = reg_model_name, tags = {'dev': 'ronil'})
+          print('model register bhi ho gya')
+
+          # register model ka desc update karo
+          client.update_registered_model(name = reg_model_name, description = 'random forest model with acc > 75%')
+          print('reg model ka desc bhi add kr diya')
+
+          # register model me tag dalna pdega
+          client.set_registered_model_tag(name = reg_model_name, key = 'author', value = 'ronilpatil')
+          client.set_registered_model_tag(name = reg_model_name, key = 'approved_by', value = 'SMLE-II')
+          print('register model ko tag bhi de diya')
+
+          # version ko description dega
+          client.update_model_version(name = reg_model_name, version = mv.version, description = 'version-I by dev ronil')
+          print('ab version ko description de diya')
+
+          if mv.version == 1 : 
+               # tag already de diya register krte time, ab alias ki bari
+               client.set_registered_model_alias(name = reg_model_name, version = mv.version, alias = 'production') 
+               print('first version he to direct register kr diya')
+          else : 
+               print('else condition me ghusa')'''
+
+# ------------------------------------------------------------------------------------------------------------------------------------------------
+
+'''
+try : 
+     prod_version = client.get_model_version_by_alias(name = reg_model_name, alias = 'production').version
+     prod_run_id = client.get_model_version_by_alias(name = reg_model_name, alias = 'production').run_id
+     print('production me model already he bro')
+     print(f"version: {prod_version} and run_id: {prod_run_id}")
+except MlflowException :
+     prod_version = None
+     print('koisa bhi model prod env me he hi nahi')
+
+if prod_version : 
+     prod_accuracy = mlflow.get_run(run_id = prod_run_id).data.metrics['accuracy']
+     accuracy = mlflow.get_run(run_id = run_id).data.metrics['accuracy']
+     if prod_accuracy > accuracy : 
+          # delete th registered model
+          client.delete_model_version(name = reg_model_name, version = mv.version)
+          print(f"prod accuracy: {prod_accuracy} > new_model_acc {accuracy}")
+          print('No need to update the production model')
+          print('registered model delete kr diya')
+     else : 
+          client.set_registered_model_alias(name = reg_model_name, version = prod_version, alias = 'archive')
+          client.set_registered_model_alias(name = reg_model_name, version = mv.version, alias = 'production')
+          print('Model prod me dal gya bhidu, chill kr')
+else :
+     client.set_registered_model_alias(name = reg_model_name, version = mv.version, alias = 'production')'''
+
+# -------------------------------------------------------------------------------------------------------------------------------
+
+# ye experiments ki sari details dega
+# for i in client.search_experiments() :
+     # print(i)
+
+# ye individual experiemnt ki detail dega, exp id is mandatory
+# print(client.get_experiment(experiment_id = 3))
+
+# ye particular exp k sare runs dega or condition se filtering bhi possible he
+# for i in client.search_runs(experiment_ids = 2): 
+     # print(i, '\n\n')
+
+# ye particular experiment k runs ko filter kr k dega, yha condition lgayi he or sort b
+# print(len(client.search_runs(experiment_ids = 2, filter_string = 'metrics.accuracy > 0.73', order_by = ['metric.accuracy DESC'])))
+
+
+# --------------------------- model registry --------------------------------------------------
+
+
+# ------------------------------- model level pr
+
+# ye model register karega, pr humko run id dena hogi kisi bhi run ki, ye hum search_runs se le skte he 
+# agar same name se already reg he to usi me ek version create ke dega other wise new create karega
+# model_uri = f"runs:/{'ae57325ad7ed45d9bc08197c9913cda6'}/sklearn-model"
+# # yha ye tags, version ko tag dega, naki registered model ko
+# mv = mlflow.register_model(model_uri = model_uri, name = 'api_testing', tags = {'author':'ronil', 'quarter': 'Q1 2024'})
+# # various parameters r there we can check
+# print(mv.version)
+# print(mv.aliases)
+
+# agar registered model already exist krte hoto new version create krega ye
+# is case me tags kaam aaya, new version create kiya isne or usko tags assign kiya
+# mv = mlflow.register_model(model_uri = f"runs:/{'641f57a277ad412584f925ea0b7b8655'}/sklearn-model", name = 'api_testing', tags = {'validation status': 'in-approval'})
+
+# ------------------------ description
+# ye particular registered model ka description add karega
+# client.update_registered_model(name = 'api_testing', description = 'adding this description explicitely')
+
+# ---------------------- tags
+# ye registered model ko tag assign karega, multiple tag at a time assign nahi kr skte one by one krna pdega
+# client.set_registered_model_tag(name = 'api_testing', key = 'author', value = 'ronil')
+
+# Delete registered model ka tag
+# client.delete_registered_model_tag(mlflow_config['registered_model_name'], "task")
+
+# ----------------------- get details
+# ye registered models ki details dega, iska use kr k hum kuch bhi kr skte he
+# for i in client.search_registered_models() :
+#      for j in i :
+#           print(j) 
+#      print()
+
+# ----------------- delete
+# Delete a registered model along with all its versions
+# client.delete_registered_model(name = mlflow_config['registered_model_name'])
+
+
+# ----------------------------------------- version/run level pr 
+
+# --------------------- search version
+# isse hum kisi bhi registered model k versions ko filter kr skte he but isme ek bug bol skte he 
+# ki ye us version ka alias extract nhi kr pa rha he
+# print(client.search_model_versions(filter_string = "name = 'api_testing' and tags.status = 'pending'"))
+
+# ----------------- description
+# ye kisi bhi registered model k version ka description add/modify kr skta he
+# client.update_model_version(
+     # name = 'api_testing',
+     # version = 2,
+     # description = 'adding description for version-2 of api_tesing registered model',
+# )
+
+# ------------------- tags
+# ye kisi bho reg model k version ko tag assign karega
+# client.set_model_version_tag(name = 'api_testing', version = 1, key = 'status', value = 'pending')
+
+# Delete model version tag
+# client.delete_model_version_tag('api_testing', '23', 'validation_status')
+
+
+# ------------------------ aliases
+
+# client.set_registered_model_alias(name = 'api_testing', alias = 'staging', version = 1)
+
+# ye version k alias se model ki detail dega
+# print(client.get_model_version_by_alias('api_testing', 'staging'))
+
+# alias delete karega 
+# client.delete_registered_model_alias(name = 'api_testing', alias = 'production')
+
+# ------------------- delete versions
+# ye registered model k version ko delete krega
+# versions = [1, 2, 3]
+# for version in versions :
+#      client.delete_model_version(name = 'api_testing', version = version)
+
+# ------------- delete reg model tag
+# client.delete_registered_model_tag(name = 'api_testing', key = 'tags.status')
+
+
+
+# model load krne k liye
+# model = load_model(f"models:/api_testing/2")
+
+
