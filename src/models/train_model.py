@@ -84,12 +84,17 @@ def main() -> None :
           
           # runs description
           with mlflow.start_run(description = 'Using random forest classifier algo - by ronil') : 
+               # logging the prarmeters
                mlflow.log_params({"n_estimator": details['params']['n_estimator'], "criterion": details['params']['criterion'], 
                                   "max_depth": details['params']['max_depth'], "seed": details['params']['random_state']})
+               # logging metrics
                mlflow.log_metrics({"accuracy": details['metrics']['accuracy'], "precision": details['metrics']['precision'], 
                                    "recall": details['metrics']['recall'], "roc_score": details['metrics']['roc_score']})
+               # loagging the current run's model
                log_model(details['model'], "model")
+               # logging confusion matrix img
                mlflow.log_artifact(filename, 'confusion_matrix')
+               # setting tags to each run
                mlflow.set_tags({'project_name': 'wine-quality', 'project_quarter': 'Q1-2024', 'ml_model' : 'RFC'})
 
           save_model(details['model'], model_dir)

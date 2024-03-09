@@ -4,7 +4,6 @@ import pathlib
 import pandas as pd
 from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
 from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
 from hyperopt.pyll import scope
 from src.data.make_dataset import load_data
