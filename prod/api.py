@@ -67,6 +67,7 @@ async def predict_wineq(input_data: WineqIp) :
                     processed_data['total_minerals']]]
 
      # here we can not pass this predictions output directly as api output because it's numpy array ok...
+     # and numpy array is not compatible with any web framework
      # I stuck here for 3 hrs, this error was damn...
      predictions = model.predict(data).tolist()
      pred_probability = model.predict_proba(data).tolist()

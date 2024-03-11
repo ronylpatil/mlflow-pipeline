@@ -23,17 +23,13 @@ st.set_page_config(page_title = 'WineQ Prediction',
 mlflow.set_tracking_uri(params['mlflow_config']['mlflow_tracking_uri'])
 client = MlflowClient()
 
-# model = client.get_model_version_by_alias(name = reg_model_name, alias = stage)
-# model = load_model(f"models:/{model.name}/{model.version}")
-
-# Sidebar Infor
+# Sidebar Info
 st.sidebar.title("About Me 🤖")
 try :
      model = client.get_model_version_by_alias(name = params['mlflow_config']['reg_model_name'], alias = params['mlflow_config']['stage'])
      
      st.sidebar.write(f"#### Model Name\n ```{model.name}```")
      st.sidebar.write(f"#### Model Version\n ```version v{model.version}```")
-     # st.sidebar.write(f"#### Current Stage\n ```{model.aliases[0]}```")
      st.sidebar.write(f"#### Current Stage")
      for i in model.aliases: 
           st.sidebar.write(f'```{i}```')
