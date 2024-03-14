@@ -87,8 +87,8 @@ stages:
       size: 601982
     - path: ./src/models/train_model.py
       hash: md5
-      md5: 4d0580c9fc61170b923f4b77a4a4d48b
-      size: 5594
+      md5: 5e294cb2c3d36529e7c479180f25efe5
+      size: 5844
     params:
       params.yaml:
         base.target: quality
@@ -105,8 +105,8 @@ stages:
     outs:
     - path: ./models/model.joblib
       hash: md5
-      md5: e26db9f697ece94d7d1bd6a81244f176
-      size: 822825
+      md5: 2abc3afc802ff579283b38e32e5a3190
+      size: 141177
   tune_model:
     cmd: python ./src/models/tune_model.py
     deps:
@@ -120,12 +120,18 @@ stages:
       size: 601982
     - path: ./src/models/tune_model.py
       hash: md5
-      md5: c5467c84b9cb035bbfb4f7559024fd11
-      size: 5873
+      md5: 1aa831ddf9b7ee87cf1eac33ee2e057d
+      size: 7892
     params:
       params.yaml:
         base.target: quality
         build_features.extended_data: /data/extended
-        hyperopt.max_eval: 5
+        hyperopt.max_eval: 2
+        hyperopt.model_name: best_model
         mlflow_config.remote_server_uri: http://localhost:5000
         mlflow_config.tunningExpName: modeltunning
+    outs:
+    - path: ./models/best_model.joblib
+      hash: md5
+      md5: 2e6ecc02267e8f6506646e8ba6e7f6cd
+      size: 538265
