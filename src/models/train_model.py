@@ -37,9 +37,9 @@ def train_model(training_feat: np.ndarray, y_true: pd.Series, n_estimators: int,
                     'metrics': {"accuracy": accuracy, "precision": precision, "recall": recall, 
                                 "roc_score": roc_score}}
 
-def save_model(model: BaseEstimator, model_dir: str) -> None : 
+def save_model(model: BaseEstimator, model_dir: str, model_name: str = 'model') -> None : 
      try : 
-          joblib.dump(model, f'{model_dir}/model.joblib')
+          joblib.dump(model, f'{model_dir}/{model_name}.joblib')
      except Exception as e : 
           infologger.info(f'there\'s an issue while saving the model [check save_model(). exc: {e}')
      else :
