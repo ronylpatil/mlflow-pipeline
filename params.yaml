@@ -20,6 +20,7 @@ mlflow_config:
   # artifacts_dir: artifacts
   trainingExpName: modeltraining
   tunningExpName: modeltunning
+  bestModelExpName: bestModel 
   remote_server_uri: http://localhost:5000     # 127.0.0.1
   mlflow_tracking_uri: sqlite:///mlflow.db
   cmd: mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./artifacts --host localhost -p 5000
@@ -36,4 +37,5 @@ train_model:
   model_dir: /models
 
 hyperopt:
-  max_eval: 5
+  max_eval: 2
+  model_name: best_model

@@ -4,11 +4,12 @@ import pathlib
 import pandas as pd
 from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
-from hyperopt import fmin, tpe, hp, STATUS_OK, Trials
+from hyperopt import fmin, tpe, hp, STATUS_OK, Trials, space_eval
 from hyperopt.pyll import scope
 from src.data.make_dataset import load_data
 from functools import partial
 from src.logger import infologger
+from src.models.train_model import save_model
 
 infologger.info('*** Executing: tune_model.py ***')
 from src.visualization import visualize
@@ -57,6 +58,10 @@ def main() -> None :
      params = yaml.safe_load(open(f'{home_dir.as_posix()}/params.yaml'))
      parameters = params['train_model']
      TARGET = params['base']['target']
+
+     model_dir = f"{home_dir.as_posix()}{parameters['model_dir']}"
+     pathlib.Path(model_dir).mkdir(parents = True, exist_ok = True)
+
      train_data = f"{home_dir.as_posix()}{params['build_features']['extended_data']}/extended_train.csv"
      test_data = f"{home_dir.as_posix()}{params['build_features']['extended_data']}/extended_test.csv"
 
@@ -87,6 +92,34 @@ def main() -> None :
                               max_evals = params['hyperopt']['max_eval'],
                               trials = Trials())
 
+          mlflow_config = params['mlflow_config']
+          remote_server_uri = mlflow_config['remote_server_uri']
+          exp_name = mlflow_config['bestModelExpName']
+          mlflow.set_tracking_uri(remote_server_uri)
+          mlflow.set_experiment(experiment_name = exp_name)
+          # adding experiment description
+          experiment_description = ('logging best model') 
+          mlflow.set_experiment_tag("mlflow.note.content", experiment_description)
+
+          best_model = RandomForestClassifier(**space_eval(search_space, best_result))
+          best_model.fit(x_train, y_train)
+          y_pred = best_model.predict(x_test)
+          y_pred_prob = best_model.predict_proba(x_test)
+               
+          accuracy = metrics.balanced_accuracy_score(y_test, y_pred)
+          precision = metrics.precision_score(y_test, y_pred, zero_division = 1, average = 'macro')
+          recall = metrics.recall_score(y_test, y_pred, average = 'macro')
+          roc_score = metrics.roc_auc_score(y_test, y_pred_prob, average = 'macro', multi_class = 'ovr')
+
+          with mlflow.start_run(description = 'best tunned model') :
+               mlflow.set_tags({'project_name': 'wine-quality', 'model_status' : 'best_tunned', 'project_quarter': 'Q1-2024'})
+               mlflow.log_params(space_eval(search_space, best_result))
+               filename = visualize.conf_matrix(y_test, y_pred, best_model.classes_, path = f"{home_dir.as_posix()}/plots/best_model", params_obj = params)
+               mlflow.log_artifact(filename, 'confusion_matrix')
+               mlflow.log_metrics({"accuracy": accuracy, "precision": precision, "recall": recall, "roc_score": roc_score})
+               mlflow.sklearn.log_model(best_model, 'model')
+
+          save_model(best_model, model_dir = model_dir, model_name = params['hyperopt']['model_name'])
      except Exception as e :
           infologger.info(f'exception raised while tunning model using hyperopt [check main()]. exc: {e}')
      else :
