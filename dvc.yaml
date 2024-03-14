@@ -74,4 +74,4 @@ stages:
     - hyperopt.max_eval
     - hyperopt.model_name
     outs:
-    - .${train_model.model_dir}/{hyperopt.model_name}.joblib
+    - .${train_model.model_dir}/${hyperopt.model_name}.joblib
