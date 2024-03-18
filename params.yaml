@@ -24,7 +24,7 @@ mlflow_config:
   remote_server_uri: http://localhost:5000     # 127.0.0.1
   mlflow_tracking_uri: sqlite:///mlflow.db
   cmd: mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./artifacts --host localhost -p 5000
-  reg_model_name: prod_testing
+  reg_model_name: 'outperforming models'
   stage: production
 
 train_model:
@@ -37,5 +37,5 @@ train_model:
   model_dir: /models
 
 hyperopt:
-  max_eval: 2
+  max_eval: 100
   model_name: best_model
