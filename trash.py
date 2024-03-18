@@ -1,4 +1,4 @@
-
+'''
 import pathlib
 import yaml
 import joblib
@@ -235,7 +235,7 @@ client = MlflowClient()
 
 
 
-'''
+
 problem statement :
      experiments k run mese 1 efficient model nikalo -- done
      model register karo -- done
@@ -247,7 +247,7 @@ problem statement :
      usko archieve me dalo or current ko production me dalo 
      else message dalo ki efficient model already production me he
 
-'''
+
 
 exp_name = 'modeltunning'
 
@@ -330,7 +330,7 @@ else :     # model register hi nahi he
      client.set_registered_model_alias(name = reg_model_name, version = mv.version, alias = 'production')
      print('first version he to direct prod me dal diya')
 
-
+'''
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -499,5 +499,8 @@ else :
 
 # model load krne k liye
 # model = load_model(f"models:/api_testing/2")
+
+
+
 
 
