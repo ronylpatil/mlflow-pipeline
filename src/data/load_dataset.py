@@ -6,7 +6,7 @@ from src.logger import infologger
 infologger.info('*** Executing: load_dataset.py ***')
 
 # load data from given path and return df
-def load_data(remote_loc: str) -> pd.DataFrame : 
+def extract_data(remote_loc: str) -> pd.DataFrame : 
      try : 
           # correct way to read data from drive
           remote_loc = 'https://drive.google.com/uc?id=' + remote_loc.split('/')[-2]  
@@ -40,7 +40,7 @@ def main() -> None :
           # create dir if not present, else execute without any warning/error
           output_path = home_dir.as_posix() + params['load_dataset']['raw_data']
           pathlib.Path(output_path).mkdir(parents = True, exist_ok = True)
-          data = load_data(params['load_dataset']['drive_link'])
+          data = extract_data(params['load_dataset']['drive_link'])
           save_data(data, output_path = output_path, file_name = params['load_dataset']['file_name'])
           infologger.info('program terminated normally!')
 
