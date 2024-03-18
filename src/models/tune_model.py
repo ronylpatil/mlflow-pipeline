@@ -2,6 +2,7 @@ import mlflow
 import yaml
 import pathlib
 import pandas as pd
+import numpy as  np
 from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
 from hyperopt import fmin, tpe, hp, STATUS_OK, Trials, space_eval
@@ -33,10 +34,10 @@ def objective(params: dict, yaml_obj: dict, x_train: pd.DataFrame, y_train: pd.S
                y_pred = model.predict(x_test)
                y_pred_prob = model.predict_proba(x_test)
                
-               accuracy = metrics.balanced_accuracy_score(y_test, y_pred)
-               precision = metrics.precision_score(y_test, y_pred, zero_division = 1, average = 'macro')
-               recall = metrics.recall_score(y_test, y_pred, average = 'macro')
-               roc_score = metrics.roc_auc_score(y_test, y_pred_prob, average = 'macro', multi_class = 'ovr')
+               accuracy = round(metrics.balanced_accuracy_score(y_test, y_pred), 5)
+               precision = round(metrics.precision_score(y_test, y_pred, zero_division = 1, average = 'macro'), 5)
+               recall = round(metrics.recall_score(y_test, y_pred, average = 'macro'), 5)
+               roc_score = round(metrics.roc_auc_score(y_test, y_pred_prob, average = 'macro', multi_class = 'ovr'), 5)
 
                with mlflow.start_run(description = 'tunning RFC also using hyperopt optimization technique') :
                     mlflow.set_tags({'project_name': 'wine-quality', 'author' : 'ronil', 'project_quarter': 'Q1-2024'})
@@ -80,11 +81,11 @@ def main() -> None :
      partial_obj = partial(objective, **additional_params)
 
      # we can take the range as input via params.yaml
-     search_space = {'n_estimators': hp.randint('n_estimators', 200 - 15) + 15,
+     search_space = {'n_estimators': hp.choice('n_estimators', np.arange(25, 400, dtype = int)),
                      'criterion': hp.choice('criterion', ['gini', 'entropy']),
-                     'max_depth': hp.randint('max_depth', 100 - 5) + 5,
-                     'min_samples_split': hp.randint('min_samples_split', 100 - 5) + 5,
-                     'min_samples_leaf': hp.randint('min_samples_leaf', 100 - 10) + 10 }
+                     'max_depth': hp.choice('max_depth', np.arange(4, 12, dtype = int)),
+                     'min_samples_split': hp.choice('min_samples_split', np.arange(15, 50, dtype = int)),
+                     'min_samples_leaf': hp.choice('min_samples_leaf', np.arange(15, 100, dtype = int)) }
      try : 
           best_result = fmin(fn = partial_obj,
                               space = search_space,
@@ -106,10 +107,10 @@ def main() -> None :
           y_pred = best_model.predict(x_test)
           y_pred_prob = best_model.predict_proba(x_test)
                
-          accuracy = metrics.balanced_accuracy_score(y_test, y_pred)
-          precision = metrics.precision_score(y_test, y_pred, zero_division = 1, average = 'macro')
-          recall = metrics.recall_score(y_test, y_pred, average = 'macro')
-          roc_score = metrics.roc_auc_score(y_test, y_pred_prob, average = 'macro', multi_class = 'ovr')
+          accuracy = round(metrics.balanced_accuracy_score(y_test, y_pred), 5)
+          precision = round(metrics.precision_score(y_test, y_pred, zero_division = 1, average = 'macro'), 5)
+          recall = round(metrics.recall_score(y_test, y_pred, average = 'macro'), 5)
+          roc_score = round(metrics.roc_auc_score(y_test, y_pred_prob, average = 'macro', multi_class = 'ovr'), 5)
 
           with mlflow.start_run(description = 'best tunned model') :
                mlflow.set_tags({'project_name': 'wine-quality', 'model_status' : 'best_tunned', 'project_quarter': 'Q1-2024'})

@@ -27,10 +27,10 @@ def train_model(training_feat: np.ndarray, y_true: pd.Series, n_estimators: int,
           infologger.info(f'trained {type(model).__name__} model')
           y_pred = model.predict(training_feat)
           y_pred_prob = model.predict_proba(training_feat)
-          accuracy = metrics.balanced_accuracy_score(y_true, y_pred)
-          precision = metrics.precision_score(y_true, y_pred, zero_division = 1, average = 'macro')
-          recall = metrics.recall_score(y_true, y_pred, average = 'macro')
-          roc_score = metrics.roc_auc_score(y_true, y_pred_prob, average = 'macro', multi_class = 'ovr')
+          accuracy = round(metrics.balanced_accuracy_score(y_true, y_pred), 5)
+          precision = round(metrics.precision_score(y_true, y_pred, zero_division = 1, average = 'macro'), 5)
+          recall = round(metrics.recall_score(y_true, y_pred, average = 'macro'), 5)
+          roc_score = round(metrics.roc_auc_score(y_true, y_pred_prob, average = 'macro', multi_class = 'ovr'), 5)
 
           return {'model': model, 'y_pred': y_pred, 'params': {"n_estimator": n_estimators, "criterion": criterion,
                                                                 "max_depth": max_depth, "seed": random_state},
