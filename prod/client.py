@@ -37,6 +37,7 @@ try :
 
      if 'final_model' not in st.session_state :        
           with st.spinner('Loading Models') : 
+               # loading model using version, achieve same using alias
                st.session_state['final_model'] = load_model(f"models:/{model.name}/{model.version}")
      st.sidebar.info('##### Server is Up 🔥')
 except :
@@ -84,7 +85,10 @@ if fixed_acidity and volatile_acidity and citric_acid and residual_sugar and chl
                       user_input['total_minerals']]]
 
      if st.button('Predict ⚙️') :
-          with st.spinner('Training the model...') :
+          with st.spinner('Processing data...') :
                op = st.session_state['final_model'].predict(input_data)[0]
                pred_prob = st.session_state['final_model'].predict_proba(input_data)[0]
-               st.success(f'Predicted Quality is {op} with {(max(pred_prob) * 100):.2f}% model\'s confidence.')
+               st.success(f'Predicted Quality is {op} with {(max(pred_prob) * 100):.2f}% confidence.')
+
+# cmd: streamlit run ./prod/client.py
+               
