@@ -13,7 +13,7 @@ app = FastAPI()
 # Define request body model using Pydantic
 class WineqIp(BaseModel) : 
      fixed_acidity : float = Field(..., ge = 4.1, le = 16.4)
-     volatile_acidity : float = Field(..., ge = 0.5, le = 1.98)
+     volatile_acidity : float = Field(..., ge = 0.5, le = 1.98)  
      citric_acid : float = Field(..., ge = 0, le = 1.5)
      residual_sugar : float = Field(..., ge = 0.5, le = 16)
      chlorides : float = Field(..., ge = 0.008, le = 0.7)
@@ -56,7 +56,6 @@ def feat_gen(user_input: dict) -> dict :
      user_input['total_minerals'] = user_input['chlorides'] + user_input['sulphates'] + user_input['residual_sugar']
 
      return user_input
-
 
 @app.get('/')
 def root() :
