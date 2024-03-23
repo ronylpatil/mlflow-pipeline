@@ -504,3 +504,137 @@ else :
 
 
 
+# import matplotlib.pyplot as plt
+
+# def onclick(event):
+#     """Callback function to handle mouse click events."""
+#     if event.button == 1:  # Left mouse button
+#         print(f"Clicked at (x={event.xdata}, y={event.ydata})")
+#         # Store the clicked point's coordinates
+#         data_points.append((event.xdata, event.ydata))
+#         # Plot the clicked point
+#         plt.scatter(event.xdata, event.ydata, color='red')
+#         plt.draw()
+
+# # Initialize list to store data points
+# data_points = []
+
+# # Create the plot
+# plt.figure()
+# plt.title("Click to place points on the graph")
+# plt.xlabel("X-axis")
+# plt.ylabel("Y-axis")
+# plt.xlim(0, 10)  # Adjust limits as needed
+# plt.ylim(0, 10)  # Adjust limits as needed
+
+# # Connect the mouse click event to the onclick function
+# plt.connect('button_press_event', onclick)
+
+# # Display the plot
+# plt.show()
+
+# # Once the user is done placing points, you can access the data_points list
+# print("Data points:", data_points)
+
+# import matplotlib.pyplot as plt
+
+# def onclick(event):
+#     """Callback function to handle mouse click events."""
+#     if event.button == 1:  # Left mouse button (place point)
+#         print(f"Clicked at (x={event.xdata}, y={event.ydata})")
+#         # Store the clicked point's coordinates
+#         data_points.append((event.xdata, event.ydata))
+#         # Plot the clicked point
+#         plt.scatter(event.xdata, event.ydata, color='red')
+#         plt.draw()
+#     elif event.button == 3 and data_points:  # Right mouse button (undo)
+#         # Remove the last data point
+#         removed_point = data_points.pop()
+#         print(f"Undo: Removed point at (x={removed_point[0]}, y={removed_point[1]})")
+#         # Clear the plot and redraw the remaining data points
+#         plt.clf()
+#         plot_data_points()
+
+# def plot_data_points():
+#     """Plot all data points."""
+#     if data_points:
+#         x_coords, y_coords = zip(*data_points)
+#         plt.scatter(x_coords, y_coords, color='red')
+
+# # Initialize list to store data points
+# data_points = []
+
+# # Create the plot
+# plt.figure()
+# plt.title("Click to place points on the graph")
+# plt.xlabel("X-axis")
+# plt.ylabel("Y-axis")
+# plt.xlim(0, 10)  # Adjust limits as needed
+# plt.ylim(0, 10)  # Adjust limits as needed
+
+# # Plot existing data points
+# plot_data_points()
+
+# # Connect the mouse click event to the onclick function
+# plt.connect('button_press_event', onclick)
+
+# # Display the plot
+# plt.show()
+
+# # Once the user is done placing points, you can access the data_points list
+# print("Data points:", data_points)
+
+
+
+import matplotlib.pyplot as plt
+
+class ClickHandler:
+    def __init__(self):
+        self.fig, self.ax = plt.subplots()
+        self.ax.set_title("Click to place points on the graph")
+        self.ax.set_xlabel("X-axis")
+        self.ax.set_ylabel("Y-axis")
+        self.ax.set_xlim(0, 10)  # Adjust limits as needed
+        self.ax.set_ylim(0, 10)  # Adjust limits as needed
+        self.data_points = []
+        self.scatter = None
+        self.fig.canvas.mpl_connect('button_press_event', self.onclick)
+        self.fig.canvas.mpl_connect('key_press_event', self.onkeypress)
+
+    def onclick(self, event):
+        """Callback function to handle mouse click events."""
+        if event.button == 1:  # Left mouse button (place point)
+            print(f"Clicked at (x={event.xdata}, y={event.ydata})")
+            # Store the clicked point's coordinates
+            self.data_points.append((event.xdata, event.ydata))
+            # Plot the clicked point
+            self.update_plot()
+
+    def onkeypress(self, event):
+        """Callback function to handle keyboard press events."""
+        if event.key == 'backspace' and self.data_points:  # Backspace key (remove last point)
+            # Remove the last data point
+            removed_point = self.data_points.pop()
+            print(f"Removed last point at (x={removed_point[0]}, y={removed_point[1]})")
+            # Update the plot
+            self.update_plot()
+
+    def update_plot(self):
+        """Update the plot with the current data points."""
+        if self.scatter:
+            self.scatter.remove()
+        if self.data_points:
+            x_coords, y_coords = zip(*self.data_points)
+            self.scatter = self.ax.scatter(x_coords, y_coords, color='red')
+        else:
+            self.scatter = None
+        self.fig.canvas.draw_idle()
+
+# Create the click handler instance
+click_handler = ClickHandler()
+
+# Display the plot
+plt.show()
+
+# Once the user is done placing points, you can access the data_points list
+print("Data points:", click_handler.data_points)
