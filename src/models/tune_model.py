@@ -86,7 +86,10 @@ def main() -> None :
                      'max_depth': hp.choice('max_depth', np.arange(4, 12, dtype = int)),
                      'min_samples_split': hp.choice('min_samples_split', np.arange(15, 50, dtype = int)),
                      'min_samples_leaf': hp.choice('min_samples_leaf', np.arange(15, 100, dtype = int)) }
-     try : 
+     try :
+          # hp.choice return index not the actual value of parameter
+          # to convert indices into value use return_argmin = False
+          # or use space_eval(search_space, best_result)
           best_result = fmin(fn = partial_obj,
                               space = search_space,
                               algo = tpe.suggest,
