@@ -32,6 +32,9 @@ def test_load_data(load_dataset) :
      else : 
           pytest.fail('Unable to fetch data from remote server')
 
+     # ---- OR ----
+     # assert isinstance(load_dataset, pd.DataFrame), "Failure Message"     # it will raise assertion error 
+
 # test feature generation functionality
 # 'request' is a fixture that provides information about the currently executing test.
 # It allows us to access various attributes and methods to get information about the test
