@@ -17,7 +17,7 @@ setuptools==69.1.1
 streamlit==1.31.1
 fastapi==0.110.0
 pydantic==2.6.4
-uvicorn==0.28.0
+uvicorn==0.29.0
 pytest==8.1.1
 
 # cmd: pipreqs path/of/project (if already req.txt use --force after cmd)
