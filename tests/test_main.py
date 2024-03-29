@@ -76,7 +76,7 @@ user_input3 = {
                 'sulphates': 0.65,
                 'alcohol': '11.4'}
 
-# pass fixture as parameter
+# test load_data function
 def test_load_data(load_dataset) :
      # load_dataset is pointing to the dataset returned by extract_data method 
      if isinstance(load_dataset, pd.DataFrame) :            
@@ -87,19 +87,21 @@ def test_load_data(load_dataset) :
      # ---- OR ----
      # assert isinstance(load_dataset, pd.DataFrame), "Failure Message"     # it will raise assertion error 
 
+# test build_features function
 def test_build_features(load) : 
      if load.shape[1] == 20 :
           assert load.shape[1] == 20
      else :
           pytest.fail('build_feature is not working properly')
 
+# test train_model function
 def test_train_model(get_model) :
      if isinstance(get_model['model'], BaseEstimator) :
           assert isinstance(get_model['model'], BaseEstimator)
      else :
           pytest.fail('not able to train the model')
 
-# test ploting functionality
+# test conf_metrix function
 def test_conf_metrix(get_model) :
      filename = conf_matrix(y_test = y, y_pred = get_model['model'].predict(X_test), labels = get_model['model'].classes_, path = './tests/trash', params_obj = params)
      if pathlib.Path(filename).exists() :
@@ -107,16 +109,16 @@ def test_conf_metrix(get_model) :
      else :
           pytest.fail('unable to generate confusion matrix')
 
-# test response of api
+# test API response
 def test_response(client) :
      response = client.get("/")
      if response.status_code == 200 : 
           assert response.status_code == 200
           assert response.json() == {'api status': 'up & running'}
      else : 
-          pytest.fail('api is not responding')
+          pytest.fail('API is not responding')
 
-# test predict endpoint with valid input
+# test api endpoint with valid input
 def test_validIp(client) :
      response = client.post("/predict", json = user_input1)
      if response.status_code == 200 : 
@@ -124,9 +126,9 @@ def test_validIp(client) :
           assert 'predictions' in response.json()
           assert 'probability' in response.json()
      else : 
-          pytest.fail('predict endpoint failed on valid input')
+          pytest.fail('"predict/" endpoint failed on valid input')
 
-# test predict with invalid inputs
+# test api endpoint with invalid inputs
 def test_invalidIp(client) :
      response1 = client.post("/predict", json = user_input2)
      response2 = client.post("/predict", json = user_input3)
@@ -134,8 +136,9 @@ def test_invalidIp(client) :
           assert response1.status_code == 422
           assert response2.status_code == 422
      else :
-          pytest.fail('predict endpoint failed on invalid input')
+          pytest.fail('"predict/" endpoint failed on invalid input')
 
+# test api endpoint output
 def test_details(client) :
      response = client.get("/details")
      if response.status_code == 200 : 
@@ -144,7 +147,7 @@ def test_details(client) :
           assert 'model version' in response.json()
           assert 'model aliases' in response.json()
      else :
-          pytest.fails('details endpoint not responding')
+          pytest.fails('"details/" endpoint not responding')
 
 '''
 create & configure tox.ini file

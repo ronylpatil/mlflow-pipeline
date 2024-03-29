@@ -27,22 +27,27 @@ Y = train_data[TARGET]
 X_test = test_data.drop(columns = [TARGET]).values
 y = test_data[TARGET]
 
-# testing load_data function 
+# fixture with params
+# return the output of extract_data function
 @pytest.fixture(params = [drive_])
 def load_dataset(request) :
      # calling extract_data method & returning its output 
      return extract_data(request.param)
 
+# return output of feat_eng function
 @pytest.fixture(params = [data_source])
 def load(request) : 
      return feat_eng(load_data(request.param))
 
-# test model training functionality
+# fixture without parameters
+# return output of train_model function
 @pytest.fixture
 def get_model() :
      return train_model(X_train, Y, parameters['n_estimators'], parameters['criterion'], parameters['max_depth'], min_samples_leaf = parameters['min_samples_leaf'],
                  min_samples_split = parameters['min_samples_split'], random_state = parameters['random_state'], yaml_file_obj = params)
 
+# TestClient(app) is used to create a test client object for simulating/
+#  HTTP requests to a FastAPI application during testing
 @pytest.fixture
 def client() :
      return TestClient(app)
