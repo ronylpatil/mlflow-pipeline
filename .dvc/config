@@ -1,4 +1,6 @@
 [core]
-    remote = remote
+    remote = s3bucket
 ['remote "remote"']
     url = ../temp
+['remote "s3bucket"']
+    url = s3://dvcs3bucket
