@@ -4,20 +4,20 @@ stages:
     deps:
     - ./src/data/load_dataset.py
     params:
-    - load_dataset.drive_link
+    - load_dataset.bucket
     - load_dataset.raw_data
-    - load_dataset.file_name
+    - load_dataset.filename
     outs:
-    - .${load_dataset.raw_data}/${load_dataset.file_name}.csv
+    - .${load_dataset.raw_data}/${load_dataset.filename}
 
   make_dataset:
     cmd: python ./src/data/make_dataset.py
     deps:
     - ./src/data/make_dataset.py
-    - .${load_dataset.raw_data}/${load_dataset.file_name}.csv
+    - .${load_dataset.raw_data}/${load_dataset.filename}
     params:
     - load_dataset.raw_data
-    - load_dataset.file_name
+    - load_dataset.filename
     - make_dataset.test_split
     - make_dataset.seed
     - make_dataset.processed_data
