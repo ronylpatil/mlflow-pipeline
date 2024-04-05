@@ -5,33 +5,32 @@ stages:
     deps:
     - path: ./src/data/load_dataset.py
       hash: md5
-      md5: 66e46ce7e93b2c343cb1fff2b8ec22de
-      size: 2120
+      md5: a8a534f0e8da1dda51a97bd458cb3064
+      size: 2872
     params:
       params.yaml:
-        load_dataset.drive_link: 
-          https://drive.google.com/file/d/1FCVWcNyBX6tFYjfORhnAvIwS8I8zV92j/view?usp=sharing
-        load_dataset.file_name: wineq
+        load_dataset.bucket: datasetbucket
+        load_dataset.filename: WineQT.csv
         load_dataset.raw_data: /data/raw
     outs:
-    - path: ./data/raw/wineq.csv
+    - path: ./data/raw/WineQT.csv
       hash: md5
-      md5: 3155f71c567752e38f24f887ce0c4ef8
-      size: 72970
+      md5: c4ca69c2088b0d7fe9be7e8d33106695
+      size: 71823
   make_dataset:
     cmd: python ./src/data/make_dataset.py
     deps:
-    - path: ./data/raw/wineq.csv
+    - path: ./data/raw/WineQT.csv
       hash: md5
-      md5: 3155f71c567752e38f24f887ce0c4ef8
-      size: 72970
+      md5: c4ca69c2088b0d7fe9be7e8d33106695
+      size: 71823
     - path: ./src/data/make_dataset.py
       hash: md5
       md5: 8bf252df39adfc976db6502ac8a7bd28
       size: 3698
     params:
       params.yaml:
-        load_dataset.file_name: wineq
+        load_dataset.filename: WineQT.csv
         load_dataset.raw_data: /data/raw
         make_dataset.processed_data: /data/processed
         make_dataset.res_seed: 42
