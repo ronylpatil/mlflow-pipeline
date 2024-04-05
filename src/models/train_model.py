@@ -86,7 +86,7 @@ def main() -> None :
           with mlflow.start_run(description = 'Using random forest classifier algo - by ronil') : 
                # logging the prarmeters
                mlflow.log_params({"n_estimator": details['params']['n_estimator'], "criterion": details['params']['criterion'], 
-                                  "max_depth": details['params']['max_depth'], "seed": details['params']['random_state']})
+                                  "max_depth": details['params']['max_depth'], "seed": details['params']['seed']})
                # logging metrics
                mlflow.log_metrics({"accuracy": details['metrics']['accuracy'], "precision": details['metrics']['precision'], 
                                    "recall": details['metrics']['recall'], "roc_score": details['metrics']['roc_score']})
