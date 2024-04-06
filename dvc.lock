@@ -92,7 +92,7 @@ stages:
       params.yaml:
         base.target: quality
         build_features.extended_data: /data/extended
-        mlflow_config.remote_server_uri: http://ec2-18-234-194-62.compute-1.amazonaws.com:5000
+        mlflow_config.remote_server_uri: http://ec2-54-227-78-19.compute-1.amazonaws.com:5000
         mlflow_config.trainingExpName: modeltraining
         train_model.criterion: gini
         train_model.max_depth: 50
@@ -125,12 +125,12 @@ stages:
       params.yaml:
         base.target: quality
         build_features.extended_data: /data/extended
-        hyperopt.max_eval: 10
+        hyperopt.max_eval: 5
         hyperopt.model_name: best_model
-        mlflow_config.remote_server_uri: http://ec2-18-234-194-62.compute-1.amazonaws.com:5000
+        mlflow_config.remote_server_uri: http://ec2-54-227-78-19.compute-1.amazonaws.com:5000
         mlflow_config.tunningExpName: modeltunning
     outs:
     - path: ./models/best_model.joblib
       hash: md5
-      md5: e71a9a2824a1b5f228d623a148133c17
-      size: 556393
+      md5: a92d35ce853402f036226be011133080
+      size: 1023353

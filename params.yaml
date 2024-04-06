@@ -21,7 +21,7 @@ mlflow_config:
   trainingExpName: modeltraining
   tunningExpName: modeltunning
   bestModelExpName: bestModel 
-  remote_server_uri: http://ec2-18-234-194-62.compute-1.amazonaws.com:5000     # server running on ec2
+  remote_server_uri: http://ec2-54-227-78-19.compute-1.amazonaws.com:5000     # server running on ec2
   mlflow_tracking_uri: sqlite:///mlflow.db
   cmd: mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./artifacts --host localhost -p 5000
   reg_model_name: 'outperforming models'
@@ -37,5 +37,5 @@ train_model:
   model_dir: /models
 
 hyperopt:
-  max_eval: 10
+  max_eval: 5
   model_name: best_model
