@@ -21,8 +21,10 @@ mlflow_config:
   trainingExpName: modeltraining
   tunningExpName: modeltunning
   bestModelExpName: bestModel 
-  remote_server_uri: http://ec2-54-227-229-29.compute-1.amazonaws.com:5000     # server running on ec2
-  mlflow_tracking_uri: sqlite:///mlflow.db
+  remote_server_uri: http://ec2-54-224-209-137.compute-1.amazonaws.com:5000     # server running on ec2
+  # mlflow_tracking_uri: sqlite:///mlflow.db
+  mlflow_tracking_uri: mysql+pymysql://admin:Admin123@mysqldb.************.us-east-1.rds.amazonaws.com:3306/mysql_mlflow
+  # mlflow_tracking_uri: http://ec2-18-234-146-239.compute-1.amazonaws.com:5000
   cmd: mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./artifacts --host localhost -p 5000
   reg_model_name: 'outperforming models'
   stage: production
