@@ -12,6 +12,8 @@ mlflow==2.11.0
 numpy==1.26.4
 pandas==2.2.1
 PyYAML==6.0.1
+# scikit_learn version is VIMP, the version in which model is created and the version in which model being loaded should be same
+# otherwise it'll throw warnings
 scikit_learn==1.4.1.post1
 setuptools==69.1.1
 streamlit==1.31.1
