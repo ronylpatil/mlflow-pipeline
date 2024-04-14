@@ -1,6 +1,4 @@
 # build api that will show model details and prediction
-import pathlib
-import yaml
 import mlflow
 from mlflow.tracking import MlflowClient
 from mlflow.sklearn import load_model
@@ -25,16 +23,14 @@ class WineqIp(BaseModel) :
      alcohol : float = Field(..., ge = 8, le = 15)
 
 # Define your machine learning model class
-curr_dir = pathlib.Path(__file__)
-home_dir = curr_dir.parent.parent
-params = yaml.safe_load(open(f'{home_dir.as_posix()}/params.yaml'))
-mlflow.set_tracking_uri(params['mlflow_config']['mlflow_tracking_uri'])
+mlflow.set_tracking_uri("mysql+pymysql://admin:Admin123@mysqldb.***********.us-east-1.rds.amazonaws.com:3306/mysql_mlflow")
+# tracking_uri = params['mlflow_config']['mlflow_tracking_uri']
 client = MlflowClient()
 # fetch model by model version
-model_details = client.get_model_version_by_alias(name = params['mlflow_config']['reg_model_name'], alias = params['mlflow_config']['stage'])
+model_details = client.get_model_version_by_alias(name = 'outperforming models', alias = 'production')
 # model = load_model(f'models:/{model_details.name}/{model_details.version}')
 # fetch model by model alias
-model = load_model(f"models:/{model_details.name}@{params['mlflow_config']['stage']}")
+model = load_model(f"models:/{model_details.name}@{'production'}")
 
 def feat_gen(user_input: dict) -> dict : 
      user_input['total_acidity'] = user_input['fixed_acidity'] + user_input['volatile_acidity'] + user_input['citric_acid']
@@ -88,9 +84,9 @@ def get_details() :
 
 if __name__ == '__main__' :
      import uvicorn
-     uvicorn.run('prod.api:app', host = '127.0.0.1', port = 8000, log_level = 'debug',
+     uvicorn.run('prod.api:app', host = 'localhost', port = 5000, log_level = 'debug',
                     proxy_headers = True, reload = True)
 
 # app_name: api (file name)
 # port: 8000 (default)
-# cmd: uvicorn prod.api:app --reload
+# cmd: uvicorn prod.api:app --host 127.0.0.1 --port 8000 --reload
