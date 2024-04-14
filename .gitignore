@@ -89,3 +89,10 @@ temp/
 .mypy_cache/
 /artifacts
 /plots
+
+# file to test code
+test_code.py
+# credentials file
+secrets.yaml
+# trash generated while testing
+tests/trash
