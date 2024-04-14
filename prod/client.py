@@ -1,14 +1,7 @@
 import mlflow
-import pathlib
-import yaml
 import streamlit as st
 from mlflow.tracking import MlflowClient
 from mlflow.sklearn import load_model
-
-
-curr_dir = pathlib.Path(__file__)
-home_dir = curr_dir.parent.parent
-params = yaml.safe_load(open(f'{home_dir.as_posix()}/params.yaml'))
 
 st.set_page_config(page_title = 'WineQ Prediction',
                     page_icon = '🦅', 
@@ -20,13 +13,13 @@ st.set_page_config(page_title = 'WineQ Prediction',
 # you set the tracking URI globally using mlflow.set_tracking_uri(). When you create the MlflowClient object
 #  without specifying the tracking_uri parameter explicitly, it automatically uses the tracking URI that you've
 #  set globally. This approach is more concise. 
-mlflow.set_tracking_uri(params['mlflow_config']['mlflow_tracking_uri'])
+mlflow.set_tracking_uri("mysql+pymysql://admin:Admin123@mysqldb.***********.us-east-1.rds.amazonaws.com:3306/mysql_mlflow")
 client = MlflowClient()
 
 # Sidebar Info
 st.sidebar.title("About Me 🤖")
 try :
-     model = client.get_model_version_by_alias(name = params['mlflow_config']['reg_model_name'], alias = params['mlflow_config']['stage'])
+     model = client.get_model_version_by_alias(name = 'outperforming models', alias = 'production')
      
      st.sidebar.write(f"#### Model Name\n ```{model.name}```")
      st.sidebar.write(f"#### Model Version\n ```version v{model.version}```")
@@ -36,9 +29,9 @@ try :
      st.sidebar.write(f"#### Run ID\n ```{model.run_id}```")
 
      if 'final_model' not in st.session_state :        
-          with st.spinner('Loading Models') : 
+          with st.spinner('Loading Model') : 
                # loading model using version, achieve same using alias
-               st.session_state['final_model'] = load_model(f"models:/{model.name}/{model.version}")
+               st.session_state['final_model'] = load_model(f"models:/{model.name}@{'production'}")
      st.sidebar.info('##### Server is Up 🔥')
 except :
      st.sidebar.warning('##### ⚠️ Model not found')
