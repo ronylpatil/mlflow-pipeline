@@ -1,7 +1,7 @@
 MLflow Pipeline
 ==============================
 
-Building E2E MLflow Pipeline
+Built E2E ML Pipeline with MLflow & AWS.
 
 Blogs :
 - Part I - [Streamline ML Workflow with MLflow - I](https://medium.com/towards-artificial-intelligence/streamline-ml-workflow-with-mlflow%EF%B8%8F-part-i-60857cd511ed)
