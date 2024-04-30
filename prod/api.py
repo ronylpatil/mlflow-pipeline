@@ -23,7 +23,7 @@ class WineqIp(BaseModel) :
      alcohol : float = Field(..., ge = 8, le = 15)
 
 # Define your machine learning model class
-mlflow.set_tracking_uri("mysql+pymysql://admin:Admin123@mysqldb.***********.us-east-1.rds.amazonaws.com:3306/mysql_mlflow")
+mlflow.set_tracking_uri("mysql+pymysql://admin:Admin123@mysqldb.chqgugyi6uuj.us-east-1.rds.amazonaws.com:3306/mysql_mlflow")
 # tracking_uri = params['mlflow_config']['mlflow_tracking_uri']
 client = MlflowClient()
 # fetch model by model version

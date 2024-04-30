@@ -13,7 +13,7 @@ st.set_page_config(page_title = 'WineQ Prediction',
 # you set the tracking URI globally using mlflow.set_tracking_uri(). When you create the MlflowClient object
 #  without specifying the tracking_uri parameter explicitly, it automatically uses the tracking URI that you've
 #  set globally. This approach is more concise. 
-mlflow.set_tracking_uri("mysql+pymysql://admin:Admin123@mysqldb.***********.us-east-1.rds.amazonaws.com:3306/mysql_mlflow")
+mlflow.set_tracking_uri("mysql+pymysql://admin:Admin123@mysqldb.chqgugyi6uuj.us-east-1.rds.amazonaws.com:3306/mysql_mlflow")
 client = MlflowClient()
 
 # Sidebar Info
