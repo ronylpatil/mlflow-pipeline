@@ -29,7 +29,7 @@ def extract_data(bucket: str, key: str, access_key: str, secret_key: str) -> pd.
           return df
 
 # save data at data/raw dir
-def save_data(data: pd.DateOffset, output_path: str, file_name: str) -> None : 
+def save_data(data: pd.DataFrame, output_path: str, file_name: str) -> None : 
      try : 
           data.to_csv(path_or_buf = output_path + f'/{file_name}', index = False)
      except Exception as e : 

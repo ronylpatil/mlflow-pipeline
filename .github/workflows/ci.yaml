@@ -8,6 +8,13 @@ on:
       - main
       - aws
 
+# ------------Enhancements-------------
+# 1. runs-on sare jobs k liye common hona mngta
+# 2. jobs k under multiple jobs hona chahiye
+# 3. jobs me dependencies bhi add kr skte he like job1 required job2
+# 4. if successfull dependiency bhi add kr skte he
+# 5. "continue-on-error:" isko bhi check krna 
+
 jobs:
   build:
     runs-on: ubuntu-latest
