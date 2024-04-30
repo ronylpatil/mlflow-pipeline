@@ -11,7 +11,8 @@ from src.models.train_model import train_model
 curr_dir = pathlib.Path(__file__)
 home_dir = curr_dir.parent.parent
 params = yaml.safe_load(open(f"{home_dir.as_posix()}/params.yaml"))
-drive_ = params['load_dataset']['drive_link']
+bucket = params['load_dataset']['bucket']
+
 processed_data = params['make_dataset']['processed_data']
 data_source = f'{home_dir.as_posix()}{processed_data}/train.csv'
 parameters = params['train_model']
@@ -29,7 +30,7 @@ y = test_data[TARGET]
 
 # fixture with params
 # return the output of extract_data function
-@pytest.fixture(params = [drive_])
+@pytest.fixture(params = [bucket, ])
 def load_dataset(request) :
      # calling extract_data method & returning its output 
      return extract_data(request.param)

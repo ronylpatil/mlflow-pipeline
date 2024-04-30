@@ -20,7 +20,7 @@ params = yaml.safe_load(open(f"{home_dir.as_posix()}/params.yaml"))
 processed_data = params['make_dataset']['processed_data']
 data_source = f'{home_dir.as_posix()}{processed_data}/train.csv'
 
-drive_ = params['load_dataset']['drive_link']
+bucket = params['load_dataset']['bucket']
 parameters = params['train_model']
 TARGET = params['base']['target']
 train_dir = f"{home_dir.as_posix()}{params['build_features']['extended_data']}/extended_train.csv"
